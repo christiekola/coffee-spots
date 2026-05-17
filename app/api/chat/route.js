@@ -65,7 +65,8 @@ export async function POST(req) {
     });
 
     const data = await response.json();
-    const reply = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || "hmm, something went wrong!";
+    console.log('API response:', JSON.stringify(data));
+const reply = data?.content?.[0]?.text || data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || "hmm, something went wrong!";
     return Response.json({ reply });
   } catch (e) {
     return Response.json({ reply: "oops, something went wrong! try again in a sec." }, { status: 500 });
