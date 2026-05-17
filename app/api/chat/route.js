@@ -57,18 +57,22 @@ export async function POST(req) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-5',
         max_tokens: 1000,
         system: SYSTEM,
         messages,
       }),
     });
 
-    const data = await response.json();
-    console.log('API response:', JSON.stringify(data));
-const reply = data?.content?.[0]?.text || data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || "hmm, something went wrong!";
+    const text = await response.text();
+    console.log('Anthropic status:', response.status);
+    console.log('Anthropic body:', text);
+
+    const data = JSON.parse(text);
+    const reply = data?.content?.[0]?.text || data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || "hmm, something went wrong!";
     return Response.json({ reply });
   } catch (e) {
+    console.log('Error:', e.message);
     return Response.json({ reply: "oops, something went wrong! try again in a sec." }, { status: 500 });
   }
 }
